@@ -1,0 +1,20 @@
+{application, foaas,
+ [{description, "A FOASS Erlang client"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib,
+    asn1,
+    crypto,
+    public_key,
+    ssl,
+    inets
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, []},
+  {links, []}
+ ]}.

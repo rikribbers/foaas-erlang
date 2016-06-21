@@ -2,5 +2,5 @@ language: erlang
 notifications:
   email: rik.ribbers@gmail.com
 otp_release:
-  - 19.3
+  - 18.2.1
 script: "make travis"

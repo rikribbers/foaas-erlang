@@ -3,4 +3,4 @@ notifications:
   email: rik.ribbers@gmail.com
 otp_release:
   - 19.3
-script: "./rebar3 eunit"
+script: "make travis"

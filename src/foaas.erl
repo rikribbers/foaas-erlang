@@ -20,12 +20,20 @@
 %%%-------------------------------------------------------------------
 -module(foaas).
 
--ifdef (TEST).
+-ifdef (EUNIT).
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
+-ifdef (EQC).
+-include_lib("eqc/include/eqc.hrl").
+
+-export([prop_options/0]).
+
+-endif.
+
 %% API exports
--export([off/2,
+-export([version/0,
+  off/2,
   you/2,
   this/1,
   that/1,
@@ -60,12 +68,38 @@
   awesome/1,
   tucker/1,
   bucket/1,
-  family/1
+  family/1,
+  shutup/2,
+  zayn/1,
+  keepcalm/2,
+  dosomething/3,
+  mornin/1,
+  thumbs/2,
+  retard/1,
+  greed/2,
+  bm/2,
+  gfy/2,
+  me/1,
+  back/2,
+  think/2,
+  keep/2,
+  single/1,
+  look/2,
+  looking/1,
+  no/1,
+  give/1,
+  zero/1,
+  pulp/2,
+  sake/1,
+  anyway/2
 ]).
 
 %%====================================================================
 %% API functions
 %%====================================================================
+-spec(version() -> binary()).
+version() ->
+  handle(version,[]).
 
 -spec(off(Name :: binary(), From :: binary()) -> binary()).
 off(Name, From) ->
@@ -125,7 +159,7 @@ outside(Name, From) ->
 
 -spec(thing(Thing :: binary(), From :: binary()) -> binary()).
 thing(Thing, From) ->
-  handle(binary_to_atom(Thing,utf16),[From]).
+  handle(binary_to_atom(Thing,utf8),[From]).
 
 -spec(thanks(From :: binary()) -> binary()).
 thanks(From) ->
@@ -211,31 +245,127 @@ bucket(From) ->
 family(From) ->
   handle(family, [From]).
 
+-spec(shutup(Name :: binary(), From :: binary()) -> binary()).
+shutup(Name, From) ->
+  handle(shutup, [Name, From]).
+
+-spec(zayn(From :: binary()) -> binary()).
+zayn(From) ->
+  handle(zayn, [From]).
+
+-spec(keepcalm(Reaction :: binary(), From :: binary()) -> binary()).
+keepcalm(Reaction, From) ->
+  handle(keepcalm, [Reaction, From]).
+
+-spec(dosomething(Do :: binary(), Something :: binary(), From :: binary()) -> binary()).
+dosomething(Do, Something, From) ->
+  handle(dosomething, [Do, Something, From]).
+
+-spec(mornin(From :: binary()) -> binary()).
+mornin(From) ->
+  handle(mornin, [From]).
+
+-spec(thumbs(Subject :: binary(), From :: binary()) -> binary()).
+thumbs(Subject, From) ->
+  handle(thumbs, [Subject, From]).
+
+-spec(retard(From :: binary()) -> binary()).
+retard(From) ->
+  handle(retard, [From]).
+
+-spec(greed(Noun :: binary(), From :: binary()) -> binary()).
+greed(Noun, From) ->
+  handle(greed, [Noun, From]).
+
+-spec(bm(Name :: binary(), From :: binary()) -> binary()).
+bm(Name, From) ->
+  handle(bm, [Name, From]).
+
+-spec(gfy(Name :: binary(), From :: binary()) -> binary()).
+gfy(Name, From) ->
+  handle(gfy, [Name, From]).
+
+-spec(me(From :: binary()) -> binary()).
+me(From) ->
+  handle(me, [From]).
+
+-spec(back(Name :: binary(), From :: binary()) -> binary()).
+back(Name, From) ->
+  handle(back, [Name, From]).
+
+-spec(think(Name :: binary(), From :: binary()) -> binary()).
+think(Name, From) ->
+  handle(think, [Name, From]).
+
+-spec(keep(Name :: binary(), From :: binary()) -> binary()).
+keep(Name, From) ->
+  handle(keep, [Name, From]).
+
+-spec(single(From :: binary()) -> binary()).
+single(From) ->
+  handle(single, [From]).
+
+-spec(look(Name :: binary(), From :: binary()) -> binary()).
+look(Name, From) ->
+  handle(look, [Name, From]).
+
+-spec(looking(From :: binary()) -> binary()).
+looking(From) ->
+  handle(looking, [From]).
+
+-spec(no(From :: binary()) -> binary()).
+no(From) ->
+  handle(no, [From]).
+
+-spec(give(From :: binary()) -> binary()).
+give(From) ->
+  handle(give, [From]).
+
+-spec(zero(From :: binary()) -> binary()).
+zero(From) ->
+  handle(zero, [From]).
+
+-spec(pulp(Language :: binary(), From :: binary()) -> binary()).
+pulp(Language, From) ->
+  handle(pulp, [Language, From]).
+
+-spec(sake(From :: binary()) -> binary()).
+sake(From) ->
+  handle(sake, [From]).
+
+-spec(anyway(Company :: binary(), From :: binary()) -> binary()).
+anyway(Company, From) ->
+  handle(anyway, [Company, From]).
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
-
+-spec(handle(Type :: atom(), Options :: list()) -> binary()).
 handle(Type,Options) when is_atom(Type) ->
-  options(Options, ["http://foaas.com/", atom_to_list(Type)]).
-
-options([],Acc) ->
-  URL = lists:flatten(Acc),
+  URL = options(Options, ["http://foaas.com/", atom_to_list(Type)]),
   Response = httpc:request(get, {URL, [{"accept", "text/plain"}]}, [], []),
-  response_body(Response);
+  response_body(Response).
+
+-spec(options(Options :: list(), Acc :: list()) -> list()).
+options([],Acc) ->
+  lists:flatten(Acc);
 
 options([H|T],Acc) ->
   List = ["/",binary_to_list(H)],
   options(T,lists:append(Acc,List)).
 
 %% From http://no-fucking-idea.com/blog/2013/01/22/making-request-to-rest-resources-in-erlang/
+-spec(response_body({ok, {term(), term(), Body :: string()}}) -> binary()).
 response_body({ok, {_, _, Body}}) -> list_to_binary(Body).
 
 
 %%====================================================================
 %% Unit tests
 %%====================================================================
--ifdef (TEST).
+-ifdef (EUNIT).
+%% the version to be expected since last update
+version_test() ->
+  ?assertEqual(<<"Version 1.0.0 FOAAS">>,version()).
 
 off_test() ->
   ?assertEqual(<<"Fuck off, Tom. - Chris">>, off(<<"Tom">>, <<"Chris">>)).
@@ -263,7 +393,7 @@ shakespeare_test() ->
     shakespeare(<<"Tom">>, <<"Chris">>)).
 
 linus_test() ->
-  ?assertEqual(<<"Tom, there aren't enough swear-words in the English language, so now I'll have to call you perkeleen vittupää just to express my disgust and frustration with this crap. - Chris">>,
+  ?assertEqual(<<"Tom, there aren't enough swear-words in the English language, so now I'll have to call you perkeleen vittupää just to express my disgust and frustration with this crap. - Chris"/utf8>>,
     linus(<<"Tom">>, <<"Chris">>)).
 
 king_test() ->
@@ -321,7 +451,7 @@ ballmer_test() ->
     ballmer(<<"Tom">>, <<"Company">>, <<"Chris">>)).
 
 what_test() ->
-  ?assertEqual(<<"What the fuck‽ - Chris">>,
+  ?assertEqual(<<"What the fuck‽ - Chris"/utf8>>,
     what(<<"Chris">>)).
 
 because_test() ->
@@ -367,5 +497,104 @@ bucket_test() ->
 family_test() ->
   ?assertEqual(<<"Fuck you, your whole family, your pets, and your feces. - Chris">>,
     family(<<"Chris">>)).
+
+shutup_test() ->
+?assertEqual(<<"Tom, shut the fuck up. - Chris">>,
+  shutup(<<"Tom">>, <<"Chris">>)).
+
+zayn_test() ->
+?assertEqual(<<"Ask me if I give a motherfuck ?!! - Chris">>,
+  zayn(<<"Chris">>)).
+
+keepcalm_test() ->
+?assertEqual(<<"Keep the fuck calm and Reaction! - Chris">>,
+  keepcalm(<<"Reaction">>, <<"Chris">>)).
+
+dosomething_test() ->
+?assertEqual(<<"Do the fucking Something! - Chris">>,
+  dosomething(<<"Do">>, <<"Something">>, <<"Chris">>)).
+
+mornin_test() ->
+?assertEqual(<<"Happy fuckin' Mornin'! - Chris">>,
+  mornin(<<"Chris">>)).
+
+thumbs_test() ->
+?assertEqual(<<"Who has two thumbs and doesn't give a fuck? Tom. - Chris">>,
+  thumbs(<<"Tom">>, <<"Chris">>)).
+
+retard_test() ->
+?assertEqual(<<"You Fucktard! - Chris">>,
+  retard(<<"Chris">>)).
+
+greed_test() ->
+  ?assertEqual(<<"The point is, ladies and gentleman, that noun -- for lack of a better word -- is good. Noun is right. Noun works. Noun clarifies, cuts through, and captures the essence of the evolutionary spirit. Noun, in all of its forms -- Noun for life, for money, for love, knowledge -- has marked the upward surge of mankind. - Chris">>,
+    greed(<<"Noun">>, <<"Chris">>)).
+
+bm_test() ->
+?assertEqual(<<"Bravo mike, Tom. - Chris">>,
+bm(<<"Tom">>, <<"Chris">>)).
+
+gfy_test() ->
+?assertEqual(<<"Golf foxtrot yankee, Tom. - Chris">>,
+  gfy(<<"Tom">>, <<"Chris">>)).
+
+me_test() ->
+?assertEqual(<<"Fuck me. - Chris">>,
+  me(<<"Chris">>)).
+
+back_test() ->
+?assertEqual(<<"Tom, back the fuck off. - Chris">>,
+  back(<<"Tom">>, <<"Chris">>)).
+
+think_test() ->
+?assertEqual(<<"Tom, you think I give a fuck? - Chris">>,
+  think(<<"Tom">>, <<"Chris">>)).
+
+keep_test() ->
+?assertEqual(<<"Tom: Fuck off. And when you get there, fuck off from there too. Then fuck off some more. Keep fucking off until you get back here. Then fuck off again. - Chris">>,
+  keep(<<"Tom">>, <<"Chris">>)).
+
+single_test() ->
+?assertEqual(<<"Not a single fuck was given. - Chris">>,
+  single(<<"Chris">>)).
+
+look_test() ->
+?assertEqual(<<"Tom, do I look like I give a fuck? - Chris">>,
+  look(<<"Tom">>, <<"Chris">>)).
+
+looking_test() ->
+?assertEqual(<<"Looking for a fuck to give. - Chris">>,
+  looking(<<"Chris">>)).
+
+no_test() ->
+?assertEqual(<<"No fucks given. - Chris">>,
+  no(<<"Chris">>)).
+
+give_test() ->
+?assertEqual(<<"I give zero fucks. - Chris">>,
+  give(<<"Chris">>)).
+
+zero_test() ->
+?assertEqual(<<"Zero, thats the number of fucks I give. - Chris">>,
+  zero(<<"Chris">>)).
+
+pulp_test() ->
+?assertEqual(<<"Language, motherfucker, do you speak it? - Chris">>,
+  pulp(<<"Language">>, <<"Chris">>)).
+
+sake_test() ->
+?assertEqual(<<"For Fuck's sake! - Chris">>,
+  sake(<<"Chris">>)).
+
+anyway_test() ->
+?assertEqual(<<"Who the fuck are you anyway, Company, why are you stirring up so much trouble, and, who pays you? - Chris">>,
+  anyway(<<"Company">>, <<"Chris">>)).
+-endif.
+
+-ifdef(EQC).
+
+prop_options() ->
+  ?FORALL(L, list(list(char())),
+    options(L,[]) ==  lists:flatten([ [$\.,E] || E <- L ])).
 
 -endif.

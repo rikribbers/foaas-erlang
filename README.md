@@ -16,13 +16,19 @@ An FOAAS client library for Erlang. see [foaas.com](http://foaas.com) for more d
     <<"Fuck you, Rik. - Someone">>
     2>
 
+# Testing
+
+There is a simple Makefile that calls rebar3 with targets : eunit,eqc and dialyzer
+
+    | => make
+
+
 # Roadmap
 
  * Support with options list as parameter
      * accept headers
      * URL
  * Support with different types for parameter (currently only binaries are supported)
- * Advanded unittesting with quickcheck
  * Compatibillaty check for operations using [https://foas.com/operations]
  * Support filters
 

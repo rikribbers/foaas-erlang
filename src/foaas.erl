@@ -340,22 +340,28 @@ anyway(Company, From) ->
 %%====================================================================
 %% Internal functions
 %%====================================================================
--spec(handle(Type :: atom(), Options :: list()) -> binary()).
+-spec(handle(Type :: atom(), Options :: [binary()] | []) -> binary()).
 handle(Type,Options) when is_atom(Type) ->
   URL = options(Options, ["http://foaas.com/", atom_to_list(Type)]),
   Response = httpc:request(get, {URL, [{"accept", "text/plain"}]}, [], []),
   response_body(Response).
 
--spec(options(Options :: list(), Acc :: list()) -> list()).
+-spec(options(Options :: [binary()], Acc :: [string()] ) -> string()).
 options([],Acc) ->
   lists:flatten(Acc);
+
+options([<<>>],Acc) ->
+  lists:flatten(Acc);
+
+options([<<>>|T],Acc) ->
+  options(T,lists:append(Acc,"/"));
 
 options([H|T],Acc) ->
   List = ["/",binary_to_list(H)],
   options(T,lists:append(Acc,List)).
 
 %% From http://no-fucking-idea.com/blog/2013/01/22/making-request-to-rest-resources-in-erlang/
--spec(response_body({ok, {term(), term(), Body :: string()}}) -> binary()).
+-spec(response_body({ok, {term(), term(), Body :: list()}}) -> binary()).
 response_body({ok, {_, _, Body}}) -> list_to_binary(Body).
 
 
@@ -589,12 +595,13 @@ sake_test() ->
 anyway_test() ->
 ?assertEqual(<<"Who the fuck are you anyway, Company, why are you stirring up so much trouble, and, who pays you? - Chris">>,
   anyway(<<"Company">>, <<"Chris">>)).
+
 -endif.
 
 -ifdef(EQC).
 
 prop_options() ->
-  ?FORALL(L, list(list(char())),
-    options(L,[]) ==  lists:flatten([ [$\.,E] || E <- L ])).
+  ?FORALL(L,list(non_empty(binary())),
+    options(L,[]) ==  lists:flatten([ [$/,binary_to_list(E)] || E <- L ])).
 
 -endif.

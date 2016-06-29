@@ -22,6 +22,14 @@ There is a simple Makefile that calls rebar3 with targets : eunit,eqc and dialyz
 
     | => make
 
+# Building
+
+In the folder docker there is a Dockerfile that I use for building and testing the client.
+
+    | => docker run -it --rm -v ~/git/foaas-erlang/:/workspace erldev  /bin/bash
+    root@acd68ca594d3:/# cd /workspace/
+    root@acd68ca594d3:/workspace# make
+
 
 # Roadmap
 

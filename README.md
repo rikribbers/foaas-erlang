@@ -16,19 +16,12 @@ An FOAAS client library for Erlang. see [foaas.com](http://foaas.com) for more d
     <<"Fuck you, Rik. - Someone">>
     2>
 
-# Testing
+# Building and testing
 
-There is a simple Makefile that calls rebar3 with targets : eunit,eqc and dialyzer
+In the rootfolder there is a Dockerfile that I use for building and testing the client.
 
-    | => make
-
-# Building
-
-In the folder docker there is a Dockerfile that I use for building and testing the client.
-
-    | => docker run -it --rm -v ~/git/foaas-erlang/:/workspace erldev  /bin/bash
-    root@acd68ca594d3:/# cd /workspace/
-    root@acd68ca594d3:/workspace# make
+    | => docker build -t  rikribbers/erldev .
+    | => docker run rikribbers/erldev /bin/sh -c "cd /root; git clone https://github.com/rikribbers/foaas-erlang; cd foaas-erlang; make"
 
 
 # Roadmap
@@ -37,7 +30,7 @@ In the folder docker there is a Dockerfile that I use for building and testing t
      * accept headers
      * URL
  * Support with different types for parameter (currently only binaries are supported)
- * Compatibillaty check for operations using [https://foas.com/operations]
+ * Compatabillaty check for operations using [https://foas.com/operations]
  * Support filters
 
 

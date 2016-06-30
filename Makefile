@@ -1,5 +1,4 @@
-all: eqc travis
-travis: eunit dialyzer
+all: eqc eunit dialyzer
 
 .PHONY:	eqc eunit dialyzer
 

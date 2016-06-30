@@ -11,4 +11,4 @@ notifications:
   email: rik.ribbers@gmail.com
 
 script:
- - make
+ - ls

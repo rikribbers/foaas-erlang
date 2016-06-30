@@ -4,11 +4,11 @@ travis: eunit dialyzer
 .PHONY:	eqc eunit dialyzer
 
 eunit:
-	./rebar3 eunit
+	rebar3 eunit
 
 dialyzer:
-	./rebar3 dialyzer
+	rebar3 dialyzer
 
 eqc:
-	./rebar3 eqc
+	rebar3 eqc
 

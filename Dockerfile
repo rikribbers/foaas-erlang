@@ -27,6 +27,9 @@ RUN mkdir -p /tmp/eqc \
     && wget http://www.quviq.com/wp-content/uploads/2015/09/eqcmini-$EQC_VERSION.zip  \
     && unzip eqcmini-$EQC_VERSION.zip \
     && erl -detached -s eqc_install install \
-    && sleep 5
+    && sleep 5 \
     && rm -r /tmp/eqc
+
+
+
 

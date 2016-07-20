@@ -3,12 +3,8 @@ sudo: required
 services:
   - docker
 
-before_install:
-  - docker build -t  rikribbers/erldev .
-  - docker run rikribbers/erldev /bin/sh -c "cd /root; git clone https://github.com/rikribbers/foaas-erlang; cd foaas-erlang; make"
-
 notifications:
   email: rik.ribbers@gmail.com
 
 script:
- - ls
+ - docker run rikribbers/erldev /bin/sh -c "cd /root; git clone https://github.com/rikribbers/foaas-erlang; cd foaas-erlang; make"

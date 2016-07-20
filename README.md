@@ -6,31 +6,39 @@ An FOAAS client library for Erlang. see [foaas.com](http://foaas.com) for more d
 
 # Usage
 
-    | => ./rebar3 shell
-    ===> Verifying dependencies...
-    ===> Compiling foaas
-    Erlang/OTP 18 [erts-7.3] [source-d2a6d81] [64-bit] [smp:4:4] [async-threads:0] [hipe] [kernel-poll:false]
+The simple interface return binary strings (accept: text/plain)
 
-    Eshell V7.3  (abort with ^G)
     1> foaas:you(<<"Rik">>,<<"Someone">>).
     <<"Fuck you, Rik. - Someone">>
-    2>
+
+There is the headers parameter
+
+    1> foaas:you(<<"Rik">>,<<"Someone">>,[{"accept","text/plain"}]).
+    <<"Fuck you, Rik. - Someone">>
+
+When no headers are provided, default is the simple interface (accept: text/plain)
+
+    1>foaas:you(<<"Rik">>,<<"Someone">>,[]).
+    <<"Fuck you, Rik. - Someone">>
+
+With valid headers you get a binary string
+
+    1> foaas:you(<<"Rik">>,<<"Someone">>,[{"accept","application/json"}]).
+    <<"{\"message\":\"Fuck you, Rik.\",\"subtitle\":\"- Someone\"}">>
+
+With invalid headers you also get a binary string
+
+    1> foaas:you(<<"Rik">>,<<"Someone">>,[{"accept","application/blabla"}]).
+    <<"Internal Server Error\n">>
 
 # Building and testing
 
-In the rootfolder there is a Dockerfile that I use for building and testing the client.
-
-    | => docker build -t  rikribbers/erldev .
     | => docker run rikribbers/erldev /bin/sh -c "cd /root; git clone https://github.com/rikribbers/foaas-erlang; cd foaas-erlang; make"
-
 
 # Roadmap
 
- * Support with options list as parameter
-     * accept headers
-     * URL
- * Support with different types for parameter (currently only binaries are supported)
- * Compatabillaty check for operations using [https://foas.com/operations]
+ * Support with different types for returning (currently only binaries are supported)
+ * Compatibility check for operations using [https://foas.com/operations]
  * Support filters
 
 
